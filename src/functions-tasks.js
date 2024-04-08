@@ -93,8 +93,16 @@ function getPowerFunction(exponent) {
  *   getPolynom(8)     => y = 8
  *   getPolynom()      => null
  */
-function getPolynom() {
-  throw new Error('Not implemented');
+function getPolynom(...args) {
+  return function fn(arg) {
+    let output = 0;
+    let i = 0;
+    while (i < args.length) {
+      output += args[i] * arg ** (args.length - 1 - i);
+      i += 1;
+    }
+    return output;
+  };
 }
 
 /**
@@ -111,10 +119,16 @@ function getPolynom() {
  *   ...
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
-function memoize(/* func */) {
-  throw new Error('Not implemented');
+function memoize(func) {
+  const cachedResult = [];
+  return function fn(...args) {
+    const argsAsStr = JSON.stringify(args);
+    if (!cachedResult[argsAsStr]) {
+      cachedResult[argsAsStr] = func(...args);
+    }
+    return cachedResult[argsAsStr];
+  };
 }
-
 /**
  * Returns the function trying to call the passed function and if it throws,
  * retrying it specified number of attempts.
@@ -167,8 +181,15 @@ function retry(func, attempts) {
  * cos(3.141592653589793) ends
  *
  */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  return function fn(...args) {
+    const argsAsStr = JSON.stringify(args).slice(1, -1);
+    const logIntro = `${func.name}(${argsAsStr})`;
+    logFunc(`${logIntro} starts`);
+    const output = func(...args);
+    logFunc(`${logIntro} ends`);
+    return output;
+  };
 }
 /**
  * Return the function with partial applied arguments
