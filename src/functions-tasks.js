@@ -130,8 +130,18 @@ function memoize(/* func */) {
  * }, 2);
  * retryer() => 2
  */
-function retry(/* func, attempts */) {
-  throw new Error('Not implemented');
+function retry(func, attempts) {
+  let attempt = 0;
+  return () => {
+    while (!(attempt > attempts)) {
+      try {
+        return func();
+      } catch (error) {
+        attempt += 1;
+      }
+    }
+    return attempt;
+  };
 }
 
 /**
@@ -160,7 +170,6 @@ function retry(/* func, attempts */) {
 function logger(/* func, logFunc */) {
   throw new Error('Not implemented');
 }
-
 /**
  * Return the function with partial applied arguments
  *
